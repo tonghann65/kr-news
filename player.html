@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auto Play & Redirect</title>
+    <title>Watch Video then Smart Link</title>
     <style>
         * { box-sizing: border-box; }
         html, body {
@@ -34,7 +34,7 @@
 <body>
 
     <div class="container">
-        <!-- វីដេអូលេងស្វ័យប្រវត្តិដោយបិទសំឡេង ( muted ) ដើម្បីជៀសវាងការបដិសេធពី Browser -->
+        <!-- វីដេអូលេងធម្មតា មាន Controls ពេញលេញ និង Autoplay -->
         <video id="player" controls autoplay muted playsinline></video>
     </div>
 
@@ -46,19 +46,17 @@
 
         if (videoUrl) {
             player.src = videoUrl;
-
-            // ព្យាយាមលេងវីដេអូ និងបញ្ជូនទៅកាន់ Smart Link ព្រមគ្នាដោយស្វ័យប្រវត្តិ
-            player.play().then(() => {
-                // ប្តូរទំព័រទៅកាន់ Smart Link ភ្លាមៗពេលវីដេអូចាប់ផ្តើមដំណើរការ
-                setTimeout(() => {
-                    window.location.href = smartLink;
-                }, 500); // កំណត់ពេល 0.5 វិនាទី ដើម្បីឱ្យវីដេអូលេងដំណើរការសិន
-            }).catch(error => {
-                console.log("Autoplay/Redirect prevented:", error);
+            player.play().catch(error => {
+                console.log("Autoplay prevented:", error);
             });
         } else {
             document.body.innerHTML = "<h2 style='color:white;text-align:center;margin-top:40px;'>No Video Found</h2>";
         }
+
+        // ពេលវីដេអូលេងចប់ (Ended) Smart Link នឹងបញ្ជូនទៅមុខដោយស្វ័យប្រវត្តិដោយមិនបាច់ចុច
+        player.addEventListener('ended', function() {
+            window.location.href = smartLink;
+        });
     </script>
 </body>
 </html>
