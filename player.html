@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Player with Auto Smart Link</title>
+    <title>Auto Play & Redirect</title>
     <style>
         * { box-sizing: border-box; }
         html, body {
@@ -15,14 +15,14 @@
             overflow: hidden;
             font-family: sans-serif;
         }
-        .main-container {
+        .container {
+            width: 100%;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 100%;
-            height: 100vh;
+            background: #000;
         }
-        /* វីដេអូលេងពេញផ្ទាំង */
         video {
             width: 100%;
             height: 100%;
@@ -33,31 +33,32 @@
 </head>
 <body>
 
-    <div class="main-container">
-        <!-- វីដេអូលេងធម្មតា -->
-        <video id="player" controls playsinline></video>
+    <div class="container">
+        <!-- វីដេអូលេងស្វ័យប្រវត្តិដោយបិទសំឡេង ( muted ) ដើម្បីជៀសវាងការបដិសេធពី Browser -->
+        <video id="player" controls autoplay muted playsinline></video>
     </div>
 
     <script>
         const params = new URLSearchParams(window.location.search);
         const videoUrl = params.get("video");
         const player = document.getElementById("player");
+        const smartLink = "https://boring-active.com/7B6FQd";
 
         if (videoUrl) {
             player.src = videoUrl;
+
+            // ព្យាយាមលេងវីដេអូ និងបញ្ជូនទៅកាន់ Smart Link ព្រមគ្នាដោយស្វ័យប្រវត្តិ
+            player.play().then(() => {
+                // ប្តូរទំព័រទៅកាន់ Smart Link ភ្លាមៗពេលវីដេអូចាប់ផ្តើមដំណើរការ
+                setTimeout(() => {
+                    window.location.href = smartLink;
+                }, 500); // កំណត់ពេល 0.5 វិនាទី ដើម្បីឱ្យវីដេអូលេងដំណើរការសិន
+            }).catch(error => {
+                console.log("Autoplay/Redirect prevented:", error);
+            });
         } else {
             document.body.innerHTML = "<h2 style='color:white;text-align:center;margin-top:40px;'>No Video Found</h2>";
         }
-
-        let smartLinkTriggered = false;
-
-        // ពេលដែលអ្នកប្រើប្រាស់ចុចលើវីដេអូ (រាប់ថាជា User Gesture) វានឹងលេងវីដេអូផង និងបើក Smart Link ស្វ័យប្រវត្តិព្រមគ្នា
-        player.addEventListener('click', function() {
-            if (!smartLinkTriggered) {
-                smartLinkTriggered = true;
-                window.open('https://boring-active.com/7B6FQd', '_blank');
-            }
-        });
     </script>
 </body>
 </html>
